@@ -3,12 +3,20 @@ import { useStore, IStore } from "../store";
 import Card from "./Card";
 
 const Cards = () => {
-  const { users } = useStore() as IStore;
+  const { users, deleteUser, editUser } = useStore() as IStore;
   console.log(users);
   if (users?.length <= 0) {
-    return <div className="text-9xl font-extrabold">Beybuuuu</div>;
+    return (
+      <div className="text-5xl text-center font-extrabold">No user found</div>
+    );
   }
 
+  const handleDelete = (user) => {
+    deleteUser(user);
+  };
+  const handleEdit = (user) => {
+    editUser(user);
+  };
   return (
     <div className="flex flex-col gap-7 p-8">
       <Link
@@ -19,7 +27,12 @@ const Cards = () => {
       </Link>
       <div className="flex gap-6 flex-wrap justify-center">
         {users?.map((user, index) => (
-          <Card user={user} key={index} />
+          <Card
+            user={user}
+            key={index}
+            onDelete={handleDelete}
+            onEdit={handleEdit}
+          />
         ))}
       </div>
     </div>

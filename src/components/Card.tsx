@@ -4,7 +4,7 @@ interface ICardProps {
   user: UserType;
 }
 
-const Card = ({ user }: ICardProps) => {
+const Card = ({ user, onDelete, onEdit }: ICardProps) => {
   const { name, surname, age, photo } = user;
 
   const fileObject = photo && photo.length > 0 ? photo[0] : null;
@@ -20,6 +20,14 @@ const Card = ({ user }: ICardProps) => {
         <h2 className="text-xl font-semibold">{name}</h2>
         <p className="text-lg text-gray-600">{surname}</p>
         <p className="text-md text-gray-400">Age: {age}</p>
+      </div>
+      <div className="w-full flex justify-between py-2">
+        <button className="btn btn-success" onClick={() => onEdit(user)}>
+          Edit
+        </button>
+        <button className="btn btn-error" onClick={() => onDelete(user.id)}>
+          Delete
+        </button>
       </div>
     </div>
   );

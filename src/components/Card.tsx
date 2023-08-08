@@ -1,7 +1,9 @@
 import { UserType } from "../store";
 
-interface ICardProps {
+export interface ICardProps {
   user: UserType;
+  onDelete: (id: string) => void;
+  onEdit: (user: UserType) => void;
 }
 
 const Card = ({ user, onDelete, onEdit }: ICardProps) => {

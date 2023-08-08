@@ -1,22 +1,35 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useStore, IStore } from "../store";
+import { useStore, IStore, UserType } from "../store";
 import Card from "./Card";
+import EditForm from "./EditForm";
+
+export interface Cards {
+  user: UserType;
+  deleteUser: (id: string) => void;
+}
 
 const Cards = () => {
-  const { users, deleteUser, editUser } = useStore() as IStore;
-  console.log(users);
-  if (users?.length <= 0) {
-    return (
-      <div className="text-5xl text-center font-extrabold">No user found</div>
-    );
-  }
+  const { users, deleteUser, editUser, updateUser } = useStore() as IStore;
+  useEffect(() => {
+    const storedUsers = localStorage.getItem("users");
+    if (storedUsers) {
+      updateUser(JSON.parse(storedUsers));
+    }
+  }, []);
+  // console.log(users);
+  const [editMode, setEditMode] = useState(false);
+  const [editedUser, setEditedUser] = useState<UserType | null>(null);
 
-  const handleDelete = (user) => {
-    deleteUser(user);
+  const handleDelete = (id: string) => {
+    deleteUser(id);
   };
-  const handleEdit = (user) => {
+  const handleEdit = (user: UserType) => {
     editUser(user);
+    setEditMode(true);
+    setEditedUser({ ...user });
   };
+
   return (
     <div className="flex flex-col gap-7 p-8">
       <Link
@@ -35,6 +48,16 @@ const Cards = () => {
           />
         ))}
       </div>
+
+      {editMode && editedUser && (
+        <div className="absolute top-[20%] left-[35%]">
+          <EditForm
+            user={editedUser}
+            onClose={() => setEditMode(false)}
+            updateUser={updateUser}
+          />
+        </div>
+      )}
     </div>
   );
 };

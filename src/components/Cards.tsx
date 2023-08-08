@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useStore, IStore, UserType } from "../store";
 import Card from "./Card";
 import EditForm from "./EditForm";
@@ -11,12 +11,13 @@ export interface Cards {
 
 const Cards = () => {
   const { users, deleteUser, editUser, updateUser } = useStore() as IStore;
-  useEffect(() => {
-    const storedUsers = localStorage.getItem("users");
-    if (storedUsers) {
-      updateUser(JSON.parse(storedUsers));
-    }
-  }, []);
+  // useEffect(() => {
+  //   const storedUsers = localStorage.getItem("users");
+  //   if (storedUsers) {
+  //     updateUser(JSON.parse(storedUsers));
+  //   }
+  // }, []);
+
   // console.log(users);
   const [editMode, setEditMode] = useState(false);
   const [editedUser, setEditedUser] = useState<UserType | null>(null);
@@ -29,15 +30,17 @@ const Cards = () => {
     setEditMode(true);
     setEditedUser({ ...user });
   };
-
+  const navigate = useNavigate();
   return (
     <div className="flex flex-col gap-7 p-8">
-      <Link
-        to="/"
-        className="px-4 py-2 mt-2 w-fit text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
-      >
-        <span>Add another user</span>
-      </Link>
+      {users?.length > 0 && (
+        <button
+          className="btn btn-accent max-w-fit"
+          onClick={() => navigate("/")}
+        >
+          Add another user
+        </button>
+      )}
       <div className="flex gap-6 flex-wrap justify-center">
         {users?.map((user, index) => (
           <Card

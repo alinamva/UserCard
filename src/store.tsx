@@ -20,8 +20,16 @@ export type UserType = {
 
 const useStore = create<IStore>((set) => {
   const storedUsers = localStorage.getItem("users");
-  const initialUsers = storedUsers ? JSON.parse(storedUsers) : [];
-  console.log(initialUsers);
+  console.log("storedUsers:", storedUsers);
+  let initialUsers = [];
+
+  try {
+    if (storedUsers) {
+      initialUsers = JSON.parse(storedUsers);
+    }
+  } catch (e) {
+    console.error("error", e);
+  }
   return {
     users: initialUsers,
     addUser: (user: UserType) => {
@@ -32,20 +40,25 @@ const useStore = create<IStore>((set) => {
       });
     },
     deleteUser: (id: string) =>
-      set((state) => ({ users: state.users.filter((u) => u.id !== id) })),
+      set((state) => {
+        const updatedUsers = state.users.filter((user) => user.id !== id);
+        localStorage.setItem("users", JSON.stringify(updatedUsers));
+        return { users: updatedUsers };
+      }),
     editUser: (editedUser: UserType) =>
       set((state) => ({
         users: state.users.map((user) =>
           user.id === editedUser.id ? editedUser : user
         ),
       })),
-
     updateUser: (updatedUser: UserType) =>
-      set((state) => ({
-        users: state.users.map((user) =>
-          user.id === updatedUser.id ? { ...user, ...updatedUser } : user
-        ),
-      })),
+      set((state) => {
+        const updatedUsers = state.users.map((user) =>
+          user.id === updatedUser.id ? updatedUser : user
+        );
+        localStorage.setItem("users", JSON.stringify(updatedUsers));
+        return { users: updatedUsers };
+      }),
   };
 });
 

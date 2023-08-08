@@ -14,13 +14,13 @@ export type UserType = {
   name: string;
   surname: string;
   age: string;
-  photo: FileList;
+  photo: FileList | File[];
   id: string;
 };
 
 const useStore = create<IStore>((set) => {
   const storedUsers = localStorage.getItem("users");
-  console.log("storedUsers:", storedUsers);
+  // console.log("storedUsers:", storedUsers);
   let initialUsers = [];
 
   try {

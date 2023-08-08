@@ -1,4 +1,5 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 import { UserType } from "../store";
 
 interface IEditForm {
@@ -7,6 +8,7 @@ interface IEditForm {
   updateUser: (updatedUser: UserType) => void;
 }
 const EditForm = ({ onClose, user, updateUser }: IEditForm) => {
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const handleSubmit = (e: any) => {
     e.preventDefault();
     const updatedData = {
@@ -14,14 +16,19 @@ const EditForm = ({ onClose, user, updateUser }: IEditForm) => {
       name: e.target.name.value,
       surname: e.target.surname.value,
       age: e.target.age.value,
-      photo: user.photo,
+      photo: photoFile ? [photoFile] : user.photo,
     };
     updateUser(updatedData);
     // console.log(updatedData);
     localStorage.setItem("editedUser", JSON.stringify(updatedData));
     onClose();
   };
-
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhotoFile(file);
+    }
+  };
   return (
     <div className=" bg-slate-200 rounded-3xl p-8">
       <div
@@ -68,7 +75,7 @@ const EditForm = ({ onClose, user, updateUser }: IEditForm) => {
           <label htmlFor="photo" className="block font-bold mb-1">
             Add Photo:
           </label>
-          <input type="file" id="photo" />
+          <input type="file" id="photo" onChange={handlePhotoChange} />
           <input
             type="submit"
             className="px-4 py-2 mt-2 w-28 text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"

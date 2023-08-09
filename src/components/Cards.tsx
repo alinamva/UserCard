@@ -12,6 +12,7 @@ export interface Cards {
 
 const Cards = () => {
   const { users, deleteUser, updateUser } = useStore() as IStore;
+  const navigate = useNavigate();
 
   const [editMode, setEditMode] = useState(false);
   const [editedUser, setEditedUser] = useState<UserType | null>(null);
@@ -23,7 +24,9 @@ const Cards = () => {
     setEditMode(true);
     setEditedUser({ ...user });
   };
-  const navigate = useNavigate();
+  {
+    users.length == 0 && navigate("/");
+  }
   return (
     <div className="flex flex-col p-8 gap-7">
       {users?.length > 0 && (
@@ -34,7 +37,7 @@ const Cards = () => {
           Add another user
         </button>
       )}
-      <div className="flex flex-wrap justify-center gap-6">
+      <div className="grid grid-cols-4 justify-center gap-6">
         {users?.map((user, index) => (
           <Card
             user={user}

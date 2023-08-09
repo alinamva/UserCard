@@ -3,13 +3,11 @@ import { IStore, useStore } from "../store";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { mySchema } from "../lib/yup";
 
 export type UserType = z.infer<typeof mySchema>;
 
 const Intro = () => {
-  const [photo, setPhoto] = useState("");
   const navigate = useNavigate();
   const {
     register,
@@ -20,10 +18,11 @@ const Intro = () => {
 
   const onSubmit = (data: UserType) => {
     try {
+      let blob = "";
       if (data.photo && data.photo?.[0]) {
-        setPhoto(URL.createObjectURL(data.photo?.[0]));
+        blob = URL.createObjectURL(data.photo?.[0]);
       }
-      const validateData: UserType = mySchema.parse({ ...data, photo });
+      const validateData: UserType = mySchema.parse({ ...data, photo: blob });
       addUser(validateData);
     } catch (error) {
       console.log("Error", error);

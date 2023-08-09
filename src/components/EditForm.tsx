@@ -1,7 +1,6 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { UserType } from "./Intro";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { mySchema } from "../lib/yup";
 
@@ -12,7 +11,6 @@ interface IEditForm {
 }
 
 const EditForm = ({ onClose, user, updateUser }: IEditForm) => {
-  const [photo, setPhoto] = useState("nese");
   const {
     register,
     handleSubmit,
@@ -24,11 +22,11 @@ const EditForm = ({ onClose, user, updateUser }: IEditForm) => {
 
   const onSubmit = (data: UserType) => {
     try {
+      let blob = "";
       if (data.photo && data.photo?.[0]) {
-        setPhoto(URL.createObjectURL(data.photo?.[0]));
+        blob = URL.createObjectURL(data.photo?.[0]);
       }
-
-      const validateData: UserType = mySchema.parse({ ...data, photo });
+      const validateData: UserType = mySchema.parse({ ...data, photo: blob });
       updateUser(validateData);
       onClose();
     } catch (error) {

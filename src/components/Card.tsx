@@ -28,7 +28,7 @@ const Card = ({ user, onDelete, onEdit }: ICardProps) => {
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
   return (
-    <div className="bg-white rounded-lg shadow-xl  min-w-[250px]">
+    <div className="bg-white rounded-lg shadow-xl  min-w-[230px]">
       <div
         className={`h-[40px] ${randomColor} rounded-t-lg w-full relative`}
       ></div>

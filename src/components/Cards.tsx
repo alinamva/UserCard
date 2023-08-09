@@ -28,16 +28,18 @@ const Cards = () => {
     users.length == 0 && navigate("/");
   }
   return (
-    <div className="flex flex-col p-8 gap-7">
+    <div className="flex flex-col   p-7 gap-7">
       {users?.length > 0 && (
-        <button
-          className="btn btn-accent max-w-fit"
-          onClick={() => navigate("/")}
-        >
-          Add another user
-        </button>
+        <div className="w-full flex justify-center sm:justify-start">
+          <button
+            className="btn btn-accent  max-w-fit"
+            onClick={() => navigate("/")}
+          >
+            Add another user
+          </button>
+        </div>
       )}
-      <div className="grid grid-cols-4 justify-center gap-6">
+      <div className="grid  lg:grid-cols-3 md:grid-cols-2  justify-center gap-8">
         {users?.map((user, index) => (
           <Card
             user={user}

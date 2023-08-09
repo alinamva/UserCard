@@ -31,16 +31,22 @@ const Intro = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-8">
       {users?.length > 0 && (
-        <button className="btn btn-accent" onClick={() => navigate("/card")}>
+        <button
+          className="btn btn-accent max-w-fit"
+          onClick={() => navigate("/card")}
+        >
           SHOW ALL USERS
         </button>
       )}
       <div className="text-center">
         <h1>Add a user</h1>
       </div>
-      <form className="w-2/4 m-auto pt-9" onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="lg:w-2/4 w-11/12 m-auto"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="mb-4">
           <label htmlFor="name" className="block mb-1 font-bold">
             Name:
@@ -90,25 +96,26 @@ const Intro = () => {
           )}
         </div>
         <div className="flex items-end justify-between mb-4">
-          <div>
+          <div className="w-full">
             <label htmlFor="photo" className="block mb-1 font-bold">
               Add Photo:
             </label>
-            <input
-              className="file-input-bordered file-input"
-              type="file"
-              id="photo"
-              {...register("photo")}
-            />
+            <div className="flex lg:flex-row gap-8 flex-col w-full justify-between ">
+              <input
+                className="file-input-bordered file-input"
+                type="file"
+                id="photo"
+                {...register("photo")}
+              />
 
-            {errors.photo?.message && (
-              <div className="mt-1 text-sm text-red-500">
-                {errors.photo?.message as string}
-              </div>
-            )}
+              {errors.photo?.message && (
+                <div className="mt-1 text-sm text-red-500">
+                  {errors.photo?.message as string}
+                </div>
+              )}
+              <button className="btn btn-accent">SUBMIT</button>
+            </div>
           </div>
-
-          <button className="btn btn-accent">SUBMIT</button>
         </div>
       </form>
     </div>

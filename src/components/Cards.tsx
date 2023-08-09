@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useStore, IStore, UserType } from "../store";
+import { useStore, IStore } from "../store";
 import Card from "./Card";
 import EditForm from "./EditForm";
+import { UserType } from "./Intro";
 
 export interface Cards {
   user: UserType;
@@ -10,15 +11,8 @@ export interface Cards {
 }
 
 const Cards = () => {
-  const { users, deleteUser, editUser, updateUser } = useStore() as IStore;
-  // useEffect(() => {
-  //   const storedUsers = localStorage.getItem("users");
-  //   if (storedUsers) {
-  //     updateUser(JSON.parse(storedUsers));
-  //   }
-  // }, []);
+  const { users, deleteUser, updateUser } = useStore() as IStore;
 
-  // console.log(users);
   const [editMode, setEditMode] = useState(false);
   const [editedUser, setEditedUser] = useState<UserType | null>(null);
 
@@ -26,13 +20,12 @@ const Cards = () => {
     deleteUser(id);
   };
   const handleEdit = (user: UserType) => {
-    editUser(user);
     setEditMode(true);
     setEditedUser({ ...user });
   };
   const navigate = useNavigate();
   return (
-    <div className="flex flex-col gap-7 p-8">
+    <div className="flex flex-col p-8 gap-7">
       {users?.length > 0 && (
         <button
           className="btn btn-accent max-w-fit"
@@ -41,7 +34,7 @@ const Cards = () => {
           Add another user
         </button>
       )}
-      <div className="flex gap-6 flex-wrap justify-center">
+      <div className="flex flex-wrap justify-center gap-6">
         {users?.map((user, index) => (
           <Card
             user={user}
@@ -53,12 +46,14 @@ const Cards = () => {
       </div>
 
       {editMode && editedUser && (
-        <div className="absolute top-[20%] left-[35%]">
-          <EditForm
-            user={editedUser}
-            onClose={() => setEditMode(false)}
-            updateUser={updateUser}
-          />
+        <div className="fixed inset-0 bg-black/75">
+          <div className="absolute -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+            <EditForm
+              user={editedUser}
+              onClose={() => setEditMode(false)}
+              updateUser={updateUser}
+            />
+          </div>
         </div>
       )}
     </div>

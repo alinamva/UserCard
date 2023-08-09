@@ -1,85 +1,121 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { UserType } from "./Intro";
+import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { UserType } from "../store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { mySchema } from "../lib/yup";
 
 interface IEditForm {
   onClose: () => void;
   user: UserType;
   updateUser: (updatedUser: UserType) => void;
 }
+
 const EditForm = ({ onClose, user, updateUser }: IEditForm) => {
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    const updatedData = {
-      id: user.id,
-      name: e.target.name.value,
-      surname: e.target.surname.value,
-      age: e.target.age.value,
-      photo: photoFile ? [photoFile] : user.photo,
-    };
-    updateUser(updatedData);
-    // console.log(updatedData);
-    localStorage.setItem("editedUser", JSON.stringify(updatedData));
-    onClose();
-  };
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setPhotoFile(file);
+  const [photo, setPhoto] = useState("nese");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UserType>({
+    defaultValues: user,
+    resolver: zodResolver(mySchema),
+  });
+
+  const onSubmit = (data: UserType) => {
+    try {
+      if (data.photo && data.photo?.[0]) {
+        setPhoto(URL.createObjectURL(data.photo?.[0]));
+      }
+
+      const validateData: UserType = mySchema.parse({ ...data, photo });
+      updateUser(validateData);
+      onClose();
+    } catch (error) {
+      console.log("Error", error);
     }
   };
+
   return (
-    <div className=" bg-slate-200 rounded-3xl p-8">
-      <div
-        className="flex w-full justify-end  cursor-pointer "
-        onClick={onClose}
-      >
-        <XMarkIcon className="w-6 " />
+    <div className="p-8 bg-slate-200 rounded-3xl">
+      <div className="flex justify-end w-full ">
+        <XMarkIcon
+          onClick={onClose}
+          className="w-6 transition-all cursor-pointer hover:text-gray-700"
+        />
       </div>
-      <form className=" m-auto " onSubmit={handleSubmit}>
+      <form
+        className="w-full max-w-lg m-auto "
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <div className="mb-4">
-          <label htmlFor="name" className="block font-bold mb-1">
+          <label htmlFor="name" className="block mb-1 font-bold">
             Name:
           </label>
           <input
             type="text"
             id="name"
-            defaultValue={user.name}
+            {...register("name")}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none "
           />
+          {errors.name?.message && (
+            <div className="mt-1 text-sm text-red-500">
+              {errors.name?.message}
+            </div>
+          )}
         </div>
         <div className="mb-4">
-          <label htmlFor="surname" className="block font-bold mb-1">
+          <label htmlFor="surname" className="block mb-1 font-bold">
             Surname:
           </label>
           <input
             type="text"
             id="surname"
-            defaultValue={user.surname}
+            {...register("surname")}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none "
           />
+          {errors.surname?.message && (
+            <div className="mt-1 text-sm text-red-500">
+              {errors.surname?.message}
+            </div>
+          )}
         </div>
         <div className="mb-4">
-          <label htmlFor="age" className="block font-bold mb-1">
+          <label htmlFor="age" className="block mb-1 font-bold">
             Age:
           </label>
           <input
             type="number"
             id="age"
-            defaultValue={user.age}
+            {...register("age", { valueAsNumber: true })}
             className="w-full px-3 py-2 border rounded-lg focus:outline-none "
           />
+          {errors.age?.message && (
+            <div className="mt-1 text-sm text-red-500">
+              {errors.age?.message}
+            </div>
+          )}
         </div>
-        <div className="mb-4">
-          <label htmlFor="photo" className="block font-bold mb-1">
-            Add Photo:
-          </label>
-          <input type="file" id="photo" onChange={handlePhotoChange} />
-          <input
-            type="submit"
-            className="px-4 py-2 mt-2 w-28 text-center text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus:outline-none"
-          />
+        <div className="flex items-end justify-between gap-1 mb-4">
+          <div>
+            <label htmlFor="photo" className="block mb-1 font-bold">
+              Add Photo:
+            </label>
+            <input
+              className="file-input-bordered file-input"
+              type="file"
+              id="photo"
+              {...register("photo")}
+            />
+
+            {errors.photo?.message && (
+              <div className="mt-1 text-sm text-red-500">
+                {errors.photo?.message as string}
+              </div>
+            )}
+          </div>
+
+          <button className="btn btn-accent">SUBMIT</button>
         </div>
       </form>
     </div>

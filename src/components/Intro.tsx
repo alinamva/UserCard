@@ -1,23 +1,15 @@
 import { useNavigate } from "react-router-dom";
-import { IStore, UserType, useStore } from "../store";
+import { IStore, useStore } from "../store";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { mySchema } from "../lib/yup";
 
-const mySchema = z.object({
-  name: z
-    .string()
-    .min(2, "Name should has at least 2 letter")
-    .max(50, "Name may has max 50 letters"),
-  surname: z
-    .string()
-    .min(6, "Surname should has at least 6 letter")
-    .max(50, "Surname may has max 50 letters"),
-  age: z.number().min(18, "Age should be greater or equal than 18").max(60),
-  photo: z.unknown(),
-});
+export type UserType = z.infer<typeof mySchema>;
 
 const Intro = () => {
+  const [photo, setPhoto] = useState("");
   const navigate = useNavigate();
   const {
     register,
@@ -27,12 +19,12 @@ const Intro = () => {
   const { users, addUser } = useStore() as IStore;
 
   const onSubmit = (data: UserType) => {
-    console.log("it worked", data);
     try {
-      const validateData: any = mySchema.parse(data);
+      if (data.photo && data.photo?.[0]) {
+        setPhoto(URL.createObjectURL(data.photo?.[0]));
+      }
+      const validateData: UserType = mySchema.parse({ ...data, photo });
       addUser(validateData);
-      const file = data.photo?.[0];
-      console.log(file);
     } catch (error) {
       console.log("Error", error);
     }
@@ -51,7 +43,7 @@ const Intro = () => {
       </div>
       <form className="w-2/4 m-auto pt-9" onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
-          <label htmlFor="name" className="block font-bold mb-1">
+          <label htmlFor="name" className="block mb-1 font-bold">
             Name:
           </label>
           <input
@@ -61,13 +53,13 @@ const Intro = () => {
             className="w-full px-3 py-2 border rounded-lg focus:outline-none "
           />
           {errors.name?.message && (
-            <div className="text-red-500 text-sm mt-1">
+            <div className="mt-1 text-sm text-red-500">
               {errors.name?.message}
             </div>
           )}
         </div>
         <div className="mb-4">
-          <label htmlFor="surname" className="block font-bold mb-1">
+          <label htmlFor="surname" className="block mb-1 font-bold">
             Surname:
           </label>
           <input
@@ -77,13 +69,13 @@ const Intro = () => {
             className="w-full px-3 py-2 border rounded-lg focus:outline-none "
           />
           {errors.surname?.message && (
-            <div className="text-red-500 text-sm mt-1">
+            <div className="mt-1 text-sm text-red-500">
               {errors.surname?.message}
             </div>
           )}
         </div>
         <div className="mb-4">
-          <label htmlFor="age" className="block font-bold mb-1">
+          <label htmlFor="age" className="block mb-1 font-bold">
             Age:
           </label>
           <input
@@ -93,16 +85,30 @@ const Intro = () => {
             className="w-full px-3 py-2 border rounded-lg focus:outline-none "
           />
           {errors.age?.message && (
-            <div className="text-red-500 text-sm mt-1">
+            <div className="mt-1 text-sm text-red-500">
               {errors.age?.message}
             </div>
           )}
         </div>
-        <div className="mb-4">
-          <label htmlFor="photo" className="block font-bold mb-1">
-            Add Photo:
-          </label>
-          <input type="file" id="photo" {...register("photo")} />
+        <div className="flex items-end justify-between mb-4">
+          <div>
+            <label htmlFor="photo" className="block mb-1 font-bold">
+              Add Photo:
+            </label>
+            <input
+              className="file-input-bordered file-input"
+              type="file"
+              id="photo"
+              {...register("photo")}
+            />
+
+            {errors.photo?.message && (
+              <div className="mt-1 text-sm text-red-500">
+                {errors.photo?.message as string}
+              </div>
+            )}
+          </div>
+
           <button className="btn btn-accent">SUBMIT</button>
         </div>
       </form>

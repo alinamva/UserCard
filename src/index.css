@@ -1,7 +1,14 @@
 @tailwind base;
 @layer base {
+  body {
+    background-color: white;
+  }
   h1 {
     font-size: 36px;
+  }
+  input {
+    background-color: white;
+    border: 2px solid lightgrey;
   }
 }
 @tailwind components;
